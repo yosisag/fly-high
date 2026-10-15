@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; worker-src 'self' blob:; connect-src 'self' blob: data: https://api.cesium.com https://*.cesium.com https://tile.googleapis.com https://www.gstatic.com https://server.arcgisonline.com; img-src 'self' data: blob: https://server.arcgisonline.com https://tile.googleapis.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; media-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'none'" />
+  <meta name="referrer" content="strict-origin-when-cross-origin" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+  <title>עוף גבוה · ניו יורק</title>
+  <meta name="theme-color" content="#140c1f" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><defs><linearGradient id='g' x1='0' x2='1'><stop offset='0' stop-color='%236fe7ff'/><stop offset='1' stop-color='%23ffc14d'/></linearGradient></defs><circle cx='32' cy='32' r='30' fill='%23140c1f'/><path d='M12 40 C24 18 40 18 52 26 C40 26 32 32 28 44 Z' fill='url(%23g)'/></svg>" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet" />
+  <script type="module" crossorigin src="./assets/nyc-S0FwUIlX.js"></script>
+  <link rel="modulepreload" crossorigin href="./assets/realistic-C3iejcHQ.js">
+  <link rel="modulepreload" crossorigin href="./assets/walker-jSHV09-t.js">
+  <link rel="stylesheet" crossorigin href="./assets/realistic-Bjbijyei.css">
+</head>
+<body class="nyc">
+  <canvas id="scene"></canvas>
+
+  <div id="hud" class="hidden">
+    <div class="vignette"></div>
+    <div class="hit-flash"></div>
+    <div class="compass">
+      <div class="compass-tape" id="compassTape"></div>
+      <div class="compass-needle"></div>
+      <div class="compass-readout"><span id="headingDeg">000°</span> <b id="headingCard">N</b></div>
+    </div>
+    <div class="letters-panel glass">
+      <div class="panel-title">אותיות הזהב <span id="letterCount">0/7</span></div>
+      <div class="slots" id="slots"></div>
+    </div>
+    <div class="timer glass"><span class="lbl">זמן</span><span id="timer">00:00.0</span></div>
+    <div class="gauge alt glass">
+      <div class="gauge-label">גובה</div>
+      <div class="gauge-value"><span id="altVal">0</span><small>מ׳</small></div>
+      <div class="gauge-bar"><div id="altBar"></div><div class="gauge-mark" style="bottom:37.5%"><span>225</span></div></div>
+      <div class="gauge-sub" id="vsVal">▲ 0.0 מ׳/ש</div>
+    </div>
+    <div class="gauge spd glass">
+      <div class="gauge-label">מהירות</div>
+      <div class="gauge-value"><span id="spdVal">0</span><small>קמ״ש</small></div>
+      <div class="boost"><div class="boost-label">BOOST</div><div class="boost-track"><div id="boostBar"></div></div></div>
+    </div>
+    <div class="landmark" id="landmark"><span class="lm-kicker">אתם ליד</span><span class="lm-name" id="lmName"></span><span class="lm-h" id="lmH"></span></div>
+    <div class="toast" id="toast"></div>
+    <div class="attrib" id="attrib"></div>
+    <div id="markers"></div>
+    <div class="keys-hint glass" id="keysHint">
+      <div><kbd>←</kbd><kbd>→</kbd> פנייה</div>
+      <div><kbd>↑</kbd><kbd>↓</kbd> טיפוס / צלילה</div>
+      <div><kbd>רווח</kbd> נפנוף · <kbd>Shift</kbd> טורבו</div>
+      <div><kbd>E</kbd> נחיתה והליכה · <kbd>V</kbd> זווית מצלמה</div>
+      <div><kbd>T</kbd> שעה · <kbd>Q</kbd> איכות · <kbd>M</kbd> קול</div>
+    </div>
+    <div class="street-chip glass"><div class="sc-name" id="streetName"></div><div class="sc-num" id="streetNum"></div></div>
+    <div class="touch-ui" id="touchUI">
+      <div class="stick" id="stick"><div class="stick-knob" id="stickKnob"></div></div>
+      <button class="tbtn flap" id="btnFlap">נפנוף</button>
+      <button class="tbtn boostbtn" id="btnBoost">טורבו</button>
+      <button class="tbtn landbtn" id="btnLand">נחיתה</button>
+    </div>
+  </div>
+  <div class="tod-chip glass" id="todChip"></div>
+
+  <div id="title" class="screen">
+    <div class="title-card">
+      <div class="kicker"><span class="dot"></span> תלת־ממד פוטוריאליסטי</div>
+      <h1 class="logo"><span class="l1">עוף גבוה</span><span class="l2">מעל <em>ניו יורק</em> 🗽</span></h1>
+      <p class="tagline">שבע אותיות זהב מחכות ליד האמפייר סטייט, פסל החירות, גשר ברוקלין ועוד.<br/>הרכיבו את המילה — בעיר האמיתית, בתלת־ממד.</p>
+      <div class="word-preview" id="wordPreview"></div>
+      <div class="loader" id="loader"><div class="loader-track"><div class="loader-fill" id="loaderFill"></div></div><div class="loader-text" id="loaderText">מתחבר למפה…</div></div>
+      <div class="key-box hidden" id="keyBox">
+        <div class="kb-title">🌍 צריך טוקן Cesium ion (חינם)</div>
+        <div class="kb-row"><input id="gkey" type="password" autocomplete="off" spellcheck="false" placeholder="הדביקו כאן את הטוקן" dir="ltr" /><button id="btnKey">שמירה</button></div>
+        <div class="kb-help">ion.cesium.com ← Access Tokens ← Default token ← העתקה. נשמר רק בדפדפן שלכם.</div>
+      </div>
+      <div class="actions">
+        <button class="btn primary" id="btnStart" disabled><span>המריאו</span></button>
+        <button class="btn ghost" id="btnFree" disabled>טיסה חופשית</button>
+      </div>
+      <div class="best" id="bestLine"></div>
+      <a class="quality-btn city-link" href="./index.html">🏙️ חזרה לפתח תקווה</a>
+    </div>
+    <div class="credits" id="credits">Google · Cesium ion</div>
+  </div>
+
+  <div id="end" class="screen hidden">
+    <div class="title-card end-card">
+      <div class="kicker"><span class="dot"></span> משימה הושלמה</div>
+      <h1 class="logo"><span class="l1 small">ניו יורק</span><span class="l2">מאוייתת בזהב ✨</span></h1>
+      <div class="stats">
+        <div class="stat"><div class="v" id="endTime">--</div><div class="k">זמן</div></div>
+        <div class="stat"><div class="v" id="endBest">--</div><div class="k">שיא אישי</div></div>
+        <div class="stat"><div class="v" id="endHits">0</div><div class="k">התנגשויות</div></div>
+        <div class="stat"><div class="v" id="endDist">0</div><div class="k">ק״מ טיסה</div></div>
+      </div>
+      <div class="new-best hidden" id="newBest">🏆 שיא חדש!</div>
+      <div class="actions">
+        <button class="btn primary" id="btnAgain"><span>טוסו שוב</span></button>
+        <button class="btn ghost" id="btnFreeEnd">המשיכו לרחף</button>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

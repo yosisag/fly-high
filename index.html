@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; worker-src 'self' blob:; connect-src 'self' blob: data: https://api.cesium.com https://*.cesium.com https://tile.googleapis.com https://www.gstatic.com https://server.arcgisonline.com; img-src 'self' data: blob: https://server.arcgisonline.com https://tile.googleapis.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; media-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'none'" />
+  <meta name="referrer" content="strict-origin-when-cross-origin" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+  <title>עוף גבוה · פתח תקווה</title>
+  <meta name="theme-color" content="#140c1f" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><defs><linearGradient id='g' x1='0' x2='1'><stop offset='0' stop-color='%23ff5ea8'/><stop offset='1' stop-color='%23ffc14d'/></linearGradient></defs><circle cx='32' cy='32' r='30' fill='%23140c1f'/><path d='M12 40 C24 18 40 18 52 26 C40 26 32 32 28 44 Z' fill='url(%23g)'/></svg>" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet" />
+  <script type="module" crossorigin src="./assets/main-BCz7mBBR.js"></script>
+  <link rel="modulepreload" crossorigin href="./assets/realistic-C3iejcHQ.js">
+  <link rel="modulepreload" crossorigin href="./assets/walker-jSHV09-t.js">
+  <link rel="stylesheet" crossorigin href="./assets/realistic-Bjbijyei.css">
+</head>
+<body>
+  <canvas id="scene"></canvas>
+
+  <!-- ============ HUD ============ -->
+  <div id="hud" class="hidden">
+    <div class="vignette"></div>
+    <div class="hit-flash"></div>
+
+    <div class="compass">
+      <div class="compass-tape" id="compassTape"></div>
+      <div class="compass-needle"></div>
+      <div class="compass-readout"><span id="headingDeg">000°</span> <b id="headingCard">N</b></div>
+    </div>
+
+    <div class="letters-panel glass">
+      <div class="panel-title">אותיות הזהב <span id="letterCount">0/8</span></div>
+      <div class="slots" id="slots"></div>
+    </div>
+
+    <div class="timer glass"><span class="lbl">זמן</span><span id="timer">00:00.0</span></div>
+
+    <div class="gauge alt glass">
+      <div class="gauge-label">גובה</div>
+      <div class="gauge-value"><span id="altVal">0</span><small>מ׳</small></div>
+      <div class="gauge-bar"><div id="altBar"></div><div class="gauge-mark" style="bottom:37.5%"><span>150</span></div></div>
+      <div class="gauge-sub" id="vsVal">▲ 0.0 מ׳/ש</div>
+    </div>
+
+    <div class="gauge spd glass">
+      <div class="gauge-label">מהירות</div>
+      <div class="gauge-value"><span id="spdVal">0</span><small>קמ״ש</small></div>
+      <div class="boost">
+        <div class="boost-label">BOOST</div>
+        <div class="boost-track"><div id="boostBar"></div></div>
+      </div>
+    </div>
+
+    <canvas id="minimap" width="360" height="360"></canvas>
+
+    <div class="landmark" id="landmark"><span class="lm-kicker">אתם מעל</span><span class="lm-name" id="lmName"></span><span class="lm-h" id="lmH"></span></div>
+    <div class="toast" id="toast"></div>
+    <div class="reticle" id="reticle"></div>
+    <div class="kcard hidden" id="kcard">
+      <div class="k-top"><span class="k-stickers">🏅 <b id="kCount">0</b></span><button class="k-btn" id="kRepeat" title="שמיעה שוב">🔊</button><button class="k-btn small" id="kExit" title="יציאה">✕</button></div>
+      <div class="k-emoji" id="kEmoji"></div>
+      <div class="k-slots" id="kSlots"></div>
+    </div>
+    <div class="kcele hidden" id="kcele"><div class="kc-big" id="kcBig"></div><div class="kc-word" id="kcWord"></div><div class="kc-sub">⭐ מדבקה חדשה! ⭐</div></div>
+    <div class="mouse-hint glass hidden" id="mouseHint">🖱️ לחצו על המסך כדי לשלוט עם העכבר</div>
+    <div class="mcard glass hidden" id="mcard">
+      <div class="mc-top"><span class="mc-icon" id="mcIcon"></span><b id="mcName"></b><span class="mc-stage" id="mcStage"></span><button class="mc-close" id="mcClose" title="ביטול משימה">✕</button></div>
+      <div class="mc-step" id="mcStep"></div>
+      <div class="mc-bottom"><span class="mc-dist" id="mcDist"></span><span class="mc-hint" id="mcHint"></span><span class="mc-time" id="mcTime"></span></div>
+    </div>
+    <div class="attrib" id="attrib"></div>
+    <div id="markers"></div>
+
+    <div class="keys-hint glass" id="keysHint">
+      <div><kbd>←</kbd><kbd>→</kbd> פנייה</div>
+      <div><kbd>↑</kbd><kbd>↓</kbd> טיפוס / צלילה</div>
+      <div><kbd>רווח</kbd> נפנוף</div>
+      <div><kbd>Shift</kbd> טורבו</div>
+      <div><kbd>T</kbd> שעה ביום · <kbd>P</kbd> צילום · <kbd>M</kbd> קול</div>
+    </div>
+
+    <div class="street-chip glass">
+      <div class="sc-name" id="streetName"></div>
+      <div class="sc-num" id="streetNum"></div>
+      <div class="sc-home" id="homeDist"></div>
+    </div>
+
+    <div class="touch-ui" id="touchUI">
+      <div class="stick" id="stick"><div class="stick-knob" id="stickKnob"></div></div>
+      <button class="tbtn flap" id="btnFlap">נפנוף</button>
+      <button class="tbtn boostbtn" id="btnBoost">טורבו</button>
+      <button class="tbtn landbtn" id="btnLand">נחיתה</button>
+    </div>
+  </div>
+
+  <div class="photo-bar" id="photoBar">
+    <span>📸 מצב צילום</span>
+    <button id="btnShot">שמור תמונה</button>
+    <button id="btnPhotoExit" class="ghost">חזרה (P)</button>
+  </div>
+
+  <div class="tod-chip glass" id="todChip"></div>
+
+  <!-- ============ TITLE ============ -->
+  <div id="title" class="screen">
+    <div class="title-card">
+      <div class="kicker"><span class="dot"></span> חוויית טיסה תלת־ממדית</div>
+      <h1 class="logo">
+        <span class="l1">עוף גבוה</span>
+        <span class="l2">מעל <em>פתח תקווה</em></span>
+      </h1>
+      <p class="tagline">שמונה אותיות זהב מסתתרות בין המגדלים האמיתיים של העיר.<br/>טוסו כמו תוכי, עברו דרך הטבעות והרכיבו את השם.</p>
+      <div class="word-preview" id="wordPreview"></div>
+      <div class="loader" id="loader">
+        <div class="loader-track"><div class="loader-fill" id="loaderFill"></div></div>
+        <div class="loader-text" id="loaderText">טוען מפה…</div>
+      </div>
+      <div class="actions">
+        <button class="btn primary" id="btnStart" disabled>
+          <span>המריאו</span>
+          <svg viewBox="0 0 24 24" width="20" height="20"><path d="M3 14 L21 5 L14 21 L11 14 Z" fill="currentColor"/></svg>
+        </button>
+        <button class="btn kids" id="btnKids" disabled>🦜 מילימון — מצב ילדים</button>
+        <button class="btn missions" id="btnMissions" disabled>📦 משימות</button>
+        <button class="btn home" id="btnHome" disabled>🏠 טוסו הביתה</button>
+        <button class="btn ghost" id="btnFree" disabled>טיסה חופשית</button>
+      </div>
+      <div class="best" id="bestLine"></div>
+      <div class="char-row"><span class="map-lbl">הדמות שלכם</span><div class="char-chips" id="charChips"></div></div>
+      <div class="map-row"><span class="map-lbl">סגנון מפה</span><div class="map-chips" id="mapChips"></div></div>
+      <div class="key-box hidden" id="keyBox">
+        <div class="kb-title">🌍 תלת־ממד פוטוריאליסטי: טוקן Cesium ion (חינם) או מפתח Google</div>
+        <div class="kb-row"><input id="gkey" type="password" autocomplete="off" spellcheck="false" placeholder="הדביקו כאן את הטוקן" dir="ltr" /><button id="btnKey">שמירה</button></div>
+        <div class="kb-help">חינם בלי כרטיס אשראי: הרשמה ב-<b>ion.cesium.com</b> ← Access Tokens ← Default token ← העתקה. הטוקן נשמר רק בדפדפן שלכם.</div>
+      </div>
+      <button class="quality-btn" id="btnQuality"></button>
+      <a class="quality-btn city-link nyc-link" href="./nyc.html">🗽 ניו יורק בתלת־ממד אמיתי</a>
+      <a class="quality-btn city-link nyc-link" href="./flight.html">✈️ סימולטור טיסה — מארץ לארץ</a>
+    </div>
+    <div class="credits">נתוני מפה © OpenStreetMap contributors · ODbL &nbsp;·&nbsp; <span id="statLine"></span></div>
+  </div>
+
+  <!-- ============ MISSIONS ============ -->
+  <div id="missionsScreen" class="screen hidden">
+    <div class="title-card missions-card">
+      <div class="kicker"><span class="dot"></span> משימות בפתח תקווה האמיתית</div>
+      <h2 class="m-title">📦 בחרו משימה <span id="mTotal"></span></h2>
+      <div class="mlist" id="mList"></div>
+      <button class="btn ghost" id="btnMissionsBack">חזרה</button>
+    </div>
+  </div>
+  <div id="mdone" class="screen hidden">
+    <div class="title-card end-card">
+      <div class="kicker"><span class="dot"></span> סיום משימה</div>
+      <h2 class="m-title" id="mdTitle"></h2>
+      <div class="stars" id="mdStars"></div>
+      <div class="stats two"><div class="stat"><div class="v" id="mdTime">--</div><div class="k">זמן</div></div><div class="stat"><div class="v" id="mdBest">--</div><div class="k">השיא שלך</div></div></div>
+      <div class="md-hint" id="mdHint"></div>
+      <div class="actions"><button class="btn primary" id="mdNext"></button><button class="btn ghost" id="mdList">כל המשימות</button><button class="btn ghost" id="mdFree">המשיכו לרחף</button></div>
+    </div>
+  </div>
+
+  <!-- ============ END ============ -->
+  <div id="end" class="screen hidden">
+    <div class="title-card end-card">
+      <div class="kicker"><span class="dot"></span> משימה הושלמה</div>
+      <h1 class="logo"><span class="l1 small">פתח תקווה</span><span class="l2">מאוייתת בזהב ✨</span></h1>
+      <div class="stats">
+        <div class="stat"><div class="v" id="endTime">--</div><div class="k">זמן</div></div>
+        <div class="stat"><div class="v" id="endBest">--</div><div class="k">שיא אישי</div></div>
+        <div class="stat"><div class="v" id="endHits">0</div><div class="k">התנגשויות</div></div>
+        <div class="stat"><div class="v" id="endDist">0</div><div class="k">ק״מ טיסה</div></div>
+      </div>
+      <div class="new-best hidden" id="newBest">🏆 שיא חדש!</div>
+      <div class="actions">
+        <button class="btn primary" id="btnAgain"><span>טוסו שוב</span></button>
+        <button class="btn ghost" id="btnFreeEnd">המשיכו לרחף</button>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>
