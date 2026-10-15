@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>עוף גבוה · סיכום פרויקט</title>
+<style>
+:root{--bg:#0f0a18;--card:#1b1328;--card2:#221833;--line:#33264a;--ink:#f6efe8;--dim:#b3a7bf;--pink:#ff5ea8;--gold:#ffc94d;--cyan:#6fe7ff;--green:#6ee7a0;--red:#ff6b81;--violet:#b77cff}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.75 Rubik,system-ui,sans-serif;padding:32px 16px}
+.wrap{max-width:1080px;margin:auto}
+h1{font-size:44px;margin:0;line-height:1.1;background:linear-gradient(90deg,var(--pink),var(--gold));-webkit-background-clip:text;background-clip:text;color:transparent}
+h2{margin:44px 0 14px;font-size:23px;border-inline-start:4px solid var(--gold);padding-inline-start:10px}
+h3{margin:0 0 6px;font-size:17px}
+.sub{color:var(--dim)}.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px}
+table{width:100%;border-collapse:collapse}td,th{padding:9px 10px;border-bottom:1px solid var(--line);text-align:right;vertical-align:top}th{color:var(--dim);font-weight:500}
+code,pre{font-family:ui-monospace,Menlo,monospace;direction:ltr;unicode-bidi:embed}
+pre{background:#090611;border:1px solid var(--line);border-radius:12px;padding:12px 14px;overflow:auto;text-align:left;margin:8px 0}
+.tag{display:inline-block;padding:1px 9px;border-radius:99px;font-size:12px;font-weight:700;white-space:nowrap}
+.t-data{background:#10324a;color:var(--cyan)}.t-3d{background:#3a1030;color:var(--pink)}.t-ui{background:#3a2c08;color:var(--gold)}.t-game{background:#0f3524;color:var(--green)}.t-kids{background:#2a1846;color:var(--violet)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px}
+.stat{text-align:center;padding:16px}.stat b{display:block;font-size:30px;color:var(--gold);font-family:ui-monospace,monospace}.stat span{color:var(--dim);font-size:13px}
+.flow{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:center}
+.flow .n{padding:12px 14px;border-radius:12px;border:1px solid var(--line);background:var(--card2);text-align:center;min-width:130px}
+.flow .a{color:var(--gold);font-size:22px}
+.pill{display:inline-block;margin:3px;padding:4px 10px;border-radius:99px;background:var(--card2);border:1px solid var(--line);font-size:13px}
+.ok{color:var(--green);font-weight:700}.warn{color:var(--gold);font-weight:700}
+ol li,ul li{margin-bottom:6px}
+.timeline{border-inline-start:2px solid var(--line);padding-inline-start:18px}
+.timeline .ev{position:relative;margin-bottom:12px}.timeline .ev::before{content:'';position:absolute;right:-25px;top:8px;width:10px;height:10px;border-radius:50%;background:var(--gold)}
+.timeline .d{color:var(--dim);font-size:12px;font-family:ui-monospace,monospace}
+</style>
+</head>
+<body><div class="wrap">
+
+<h1>עוף גבוה · פתח תקווה ← העולם</h1>
+<p class="sub">משחק טיסה תלת־ממדי שהתחיל כמשחק בהשראת Fly High NYC, ונהיה עולם שלם: העיר האמיתית, מצב ילדים, משימות, ניו יורק וסימולטור טיסה מסביב לעולם.<br>27.09 – 15.10.2026 · <code>~/Desktop/fly-pt</code></p>
+
+<div class="grid" style="margin-top:20px">
+  <div class="card stat"><b>3</b><span>משחקים (פתח תקווה · ניו יורק · טייס)</span></div>
+  <div class="card stat"><b>13,374</b><span>בניינים אמיתיים בפתח תקווה</span></div>
+  <div class="card stat"><b>8 + 6</b><span>משימות בעיר + שלבי טיסה בין ארצות</span></div>
+  <div class="card stat"><b>~4,500</b><span>שורות קוד · 20 שמירות ב-git</span></div>
+</div>
+
+<h2>ארכיטקטורה</h2>
+<div class="card">
+  <div class="flow">
+    <div class="n">OpenStreetMap<br><small class="sub">בניינים · רחובות · כתובות · מסלולי המראה</small></div><span class="a">←</span>
+    <div class="n">סקריפטים ב-<code>scripts/</code><br><small class="sub">המרה לנתוני משחק</small></div><span class="a">←</span>
+    <div class="n"><code>public/data/*.json</code></div><span class="a">←</span>
+    <div class="n">Three.js בדפדפן<br><small class="sub">3 עמודים · Vite</small></div>
+  </div>
+  <div class="flow" style="margin-top:14px">
+    <div class="n">Esri לוויין<br><small class="sub">קרקע + גגות</small></div>
+    <div class="n">Cesium ion ← Google 3D Tiles<br><small class="sub">ניו יורק + כדור הארץ</small></div>
+    <div class="n">קטעי קול של מילימון<br><small class="sub">הקראה בקול הילה</small></div>
+  </div>
+</div>
+
+<h2>שלושת המשחקים</h2>
+<div class="grid">
+  <div class="card"><h3>🏙️ פתח תקווה <span class="sub">— index.html</span></h3>
+    <span class="pill">8 אותיות זהב</span><span class="pill">📦 8 משימות</span><span class="pill">🏠 טוסו הביתה</span><span class="pill">🦜 מצב ילדים</span><span class="pill">🚶 נחיתה והליכה</span><span class="pill">🚗 תנועה והולכי רגל</span><span class="pill">🐲 5 דמויות</span><span class="pill">🌅 שעות ביום</span>
+  </div>
+  <div class="card"><h3>🗽 ניו יורק <span class="sub">— nyc.html</span></h3>
+    <span class="pill">תלת־ממד פוטוריאליסטי</span><span class="pill">7 אותיות "ניו יורק"</span><span class="pill">נחיתה והליכה ברחוב או על גג</span><span class="pill">מים עם השתקפויות</span><span class="pill">התנגשות בגורדי שחקים</span>
+  </div>
+  <div class="card"><h3>✈️ טייס מסביב לעולם <span class="sub">— flight.html</span></h3>
+    <span class="pill">6 שלבים מתל אביב לניו יורק</span><span class="pill">מסלולי המראה אמיתיים</span><span class="pill">✈️ מטוס נוסעים + 🛩️ מטוס קל</span><span class="pill">🤖 טייס אוטומטי</span><span class="pill">תא טייס</span><span class="pill">האצת זמן</span>
+  </div>
+</div>
+
+<h2>רכיבים</h2>
+<div class="card"><table>
+<tr><th>קובץ</th><th>סוג</th><th>מה הוא עושה</th></tr>
+<tr><td><code>scripts/build-data.mjs</code></td><td><span class="tag t-data">DATA</span></td><td>מוריד מ-OpenStreetMap ומעבד: 13,374 בניינים, 2,133 רחובות (855 שמות), 3,581 כתובות, 14,784 עצים, 273 בניינים עם שם. ההמרה לקואורדינטות לפי WGS84 מדויקת, כדי שהנתונים יתיישרו עם הלוויין</td></tr>
+<tr><td><code>scripts/build-block.mjs</code></td><td><span class="tag t-data">DATA</span></td><td>הבלוק של הבית: ספסלים, פחים, כלובי בקבוקים, כניסות, שבילים, חניות, חנויות</td></tr>
+<tr><td><code>public/data/runways.json</code></td><td><span class="tag t-data">DATA</span></td><td>מסלולי ההמראה האמיתיים של 7 שדות התעופה (קצוות, אורך, כיוון)</td></tr>
+<tr><td><code>src/city.js</code></td><td><span class="tag t-3d">3D</span></td><td>בניית העיר: חזיתות עם חלונות, אבן ירושלמית וטיח, מעקות גג, הצללה בבסיס הקירות וצל מגע, כבישים ומדרכות, פנסים, דודי שמש, עצים ודקלים, ורשת התנגשות</td></tr>
+<tr><td><code>src/block.js</code></td><td><span class="tag t-3d">3D</span></td><td>פרטי הרחוב סביב הבית: רכבים חונים, מרפסות, גדרות ושיחים, דלתות, שלטי חנויות</td></tr>
+<tr><td><code>src/traffic.js</code></td><td><span class="tag t-3d">3D</span></td><td>170 מכוניות על רשת הכבישים האמיתית (בנתיב הימני), ו־240 הולכי רגל מונפשים</td></tr>
+<tr><td><code>src/realistic.js</code></td><td><span class="tag t-3d">3D</span></td><td>לוויין של Esri (קרקע וגגות), Google 3D Tiles דרך Cesium ion, הזזת נקודת העוגן של המפה, ומדידת גובה הקרקע</td></tr>
+<tr><td><code>src/labels.js</code></td><td><span class="tag t-ui">UI</span></td><td>שמות רחובות על האספלט, ושלטי מספר בית כחולים כמו בישראל</td></tr>
+<tr><td><code>src/bird.js</code> · <code>src/creatures.js</code> · <code>src/walker.js</code></td><td><span class="tag t-3d">3D</span></td><td>התוכי, 4 יצורי מילימון מקוריים (להבי, מימון, ברקי, עלעל), ודמות הולכת</td></tr>
+<tr><td><code>src/missions.js</code></td><td><span class="tag t-game">GAME</span></td><td>8 משימות על כתובות ומקומות אמיתיים, עם 1–3 כוכבים ושיאים שנשמרים</td></tr>
+<tr><td><code>src/kids.js</code></td><td><span class="tag t-kids">KIDS</span></td><td>מצב מילימון: אוספים את האותיות לפי הסדר, מילים עם ניקוד, הקראה ומדבקות</td></tr>
+<tr><td><code>src/input.js</code></td><td><span class="tag t-ui">UI</span></td><td>היגוי בעכבר (סטיק וירטואלי) ושלט Xbox או PlayStation עם רטט</td></tr>
+<tr><td><code>src/planes.js</code></td><td><span class="tag t-3d">3D</span></td><td>מטוס נוסעים בסגנון A320 ומטוס קל בסגנון צסנה, כל אחד עם מאפייני טיסה משלו</td></tr>
+<tr><td><code>src/flight.js</code></td><td><span class="tag t-game">GAME</span></td><td>הסימולטור: מודל טיסה, שליטה קלה וריאליסטית, טבעות גישה, סיוע בגישה לנחיתה, טייס אוטומטי ושלבים</td></tr>
+<tr><td><code>src/nyc.js</code></td><td><span class="tag t-game">GAME</span></td><td>ניו יורק: אותיות, נחיתה והליכה, מים בגובה פני הים האמיתי</td></tr>
+<tr><td><code>src/main.js</code> · <code>src/audio.js</code></td><td><span class="tag t-game">GAME</span></td><td>הלולאה הראשית, ה-HUD, מפה מוקטנת, הגדרות איכות, שעות ביום, וכל הצלילים</td></tr>
+</table></div>
+
+<h2>ציר הזמן — מה נעשה ולמה</h2>
+<div class="card timeline">
+  <div class="ev"><div class="d">27.09</div><b>המשחק הבסיסי:</b> פתח תקווה מנתוני OpenStreetMap, 8 אותיות זהב ליד מגדלים אמיתיים, תוכי, HUD, שקיעה ולילה.</div>
+  <div class="ev"><div class="d">27.09</div><b>הבית והרחוב:</b> הבית מסומן, נחיתה והליכה, שמות רחובות ומספרי בתים. נוספו רמות איכות, כי המחשב התחמם.</div>
+  <div class="ev"><div class="d">27.09</div><b>"שיראה אמיתי":</b> לוויין על הקרקע ועל הגגות. ניסיון עם Google 3D, ובדיקה גילתה שבפתח תקווה אין שם בניינים תלת־ממדיים אמיתיים.</div>
+  <div class="ev"><div class="d">27.09</div><b>ניו יורק:</b> שם יש תלת־ממד אמיתי. אותיות, נחיתה והליכה, מים, ותיקון הצפת רחובות לפי גובה פני הים הגאודטי.</div>
+  <div class="ev"><div class="d">13.10</div><b>משחקיות:</b> 8 משימות, שליטה בעכבר ובשלט, ומצב ילדים "מילימון" בקול הילה.</div>
+  <div class="ev"><div class="d">13.10</div><b>עיר חיה:</b> מכוניות והולכי רגל, דמויות לבחירה, ושיפור המראה (מעקות, הצללות, אוויר צלול).</div>
+  <div class="ev"><div class="d">13–14.10</div><b>סימולטור טיסה:</b> 6 שלבים מארץ לארץ על כדור הארץ התלת־ממדי, מסלולי המראה אמיתיים, וטייס אוטומטי שממריא ונוחת לבד.</div>
+  <div class="ev"><div class="d">15.10</div><b>בדיקה יסודית:</b> בוט ששיחק מתוך Chrome אמיתי מצא וגם תוקנו: האובך הלבן, סיבובים אינסופיים ליד המסלול, ומסך סיום. נוספו שני מטוסים מפורטים ותא טייס.</div>
+</div>
+
+<h2>תוצאות הבדיקה האחרונה (בוט שטס לפי ההוראות שעל המסך)</h2>
+<div class="card"><table>
+<tr><th>מסלול</th><th>מטוס</th><th>מסלול נחיתה</th><th>זמן</th><th></th></tr>
+<tr><td>תל אביב ← לרנקה</td><td>✈️</td><td>04/22</td><td>3:46</td><td class="ok">✓</td></tr>
+<tr><td>תל אביב ← לרנקה</td><td>🛩️</td><td>04/22 (9 מ׳ מהמרכז)</td><td>6:16</td><td class="ok">✓</td></tr>
+<tr><td>לרנקה ← אתונה</td><td>✈️</td><td>03L/21R</td><td>5:09</td><td class="ok">✓</td></tr>
+<tr><td>אתונה ← רומא</td><td>✈️ / 🛩️</td><td>34L</td><td>5:48 / 8:02</td><td class="ok">✓</td></tr>
+<tr><td>רומא ← פריז</td><td>✈️</td><td>08L/26R</td><td>5:37</td><td class="ok">✓</td></tr>
+<tr><td>פריז ← לונדון</td><td>✈️</td><td>27R</td><td>4:12</td><td class="ok">✓</td></tr>
+<tr><td>לונדון ← ניו יורק</td><td>✈️</td><td>13R/31L (JFK)</td><td>12:17*</td><td class="ok">✓</td></tr>
+</table><p class="sub">* נמדד לפני שהאצת הזמן בטיסות ארוכות הוגברה, אז עכשיו זה אמור להיות קצר יותר. כל העמודים נבדקו בלי שגיאות: פתח תקווה, מצב ילדים, משימות, ניו יורק.</p></div>
+
+<h2>בעיות שנתקלנו בהן ואיך נפתרו</h2>
+<div class="grid">
+  <div class="card"><b>המחשב מתחמם</b><br><span class="sub">שלוש רמות איכות, 30 פריימים בשנייה בתפריטים, ומצב חיסכון.</span></div>
+  <div class="card"><b>"לא נראה אמיתי"</b><br><span class="sub">ל-Google אין תלת־ממד של פתח תקווה, אז הלכנו על לוויין על הגגות ועל הקרקע, ובניינים מפורטים יותר.</span></div>
+  <div class="card"><b>המים הציפו את רחובות ניו יורק</b><br><span class="sub">כיול גובה מאריחים מטושטשים נתן תוצאה שגויה. במקומו גובה קבוע של פני הים לפי EGM96.</span></div>
+  <div class="card"><b>אובך לבן בכל המסך</b><br><span class="sub">אפקט ה-bloom מרח את השמיים הבהירים על כל התמונה. הוסר בסימולטור ובניו יורק.</span></div>
+  <div class="card"><b>המטוס התחיל לא על המסלול</b><br><span class="sub">במקום קואורדינטות מהזיכרון, נמשכו מסלולים אמיתיים מ-OpenStreetMap.</span></div>
+  <div class="card"><b>אי אפשר היה לבדוק את התלת־ממד</b><br><span class="sub">הלוח הצדדי נמצא ברקע, ו-Google לא מוריד אריחים לעמוד מוסתר. הפתרון: Chrome headless עם GPU ובוט שמשחק לבד.</span></div>
+  <div class="card"><b>הסתובבות אינסופית ליד המסלול</b><br><span class="sub">מעל המסלול ההוראות שלחו לטפס. נוספו "ישר על המסלול — נוחתים" וסיוע בגישה לנחיתה.</span></div>
+  <div class="card"><b>זכויות יוצרים</b><br><span class="sub">במקום פוקימונים אמיתיים, יצורים מקוריים מעולם מילימון.</span></div>
+</div>
+
+<h2>קבצים, סודות ומבנה תיקיות</h2>
+<div class="card">
+<pre>fly-pt/
+├─ index.html · nyc.html · flight.html     # שלושת המשחקים
+├─ src/                                     # main, city, block, traffic, labels, realistic,
+│                                           # bird, creatures, walker, kids, missions, input,
+│                                           # planes, flight, nyc, audio, geo, config, style.css
+├─ public/data/  city.json · block.json · runways.json
+├─ public/milimon-audio/                    # 385 קטעי קול (5.7MB) מתוך ~/Desktop/milimon
+├─ scripts/  build-data.mjs · build-block.mjs  (+ raw*.json, לא ב-git)
+├─ .env.local                               # טוקן Cesium ion (לא ב-git!)
+└─ PROJECT_SUMMARY.html</pre>
+<ul>
+  <li><b class="warn">🔑 טוקן Cesium ion</b> שמור ב-<code>.env.local</code> ובדפדפן (localStorage). הוא לא ב-git.</li>
+  <li><b class="warn">🏠 כתובת הבית</b> מוגדרת רק ב-<code>.env.local</code> (<code>VITE_HOME</code>), שלא עולה ל-git. בגרסה הציבורית אין כתובת.</li>
+</ul>
+</div>
+
+<h2>פקודות שימושיות</h2>
+<div class="card">
+<pre>cd ~/Desktop/fly-pt
+npm run dev -- --port 5188     # הפעלה: http://localhost:5188
+npm run build                  # בנייה ל-dist/
+npm run data                   # בנייה מחדש של city.json מתוך scripts/raw.json
+node scripts/build-block.mjs   # בנייה מחדש של block.json</pre>
+<p class="sub">כתובות: פתח תקווה <code>/</code> · ניו יורק <code>/nyc.html</code> · טייס <code>/flight.html</code></p>
+<p><b>מקשים:</b> חצים · W/S · רווח · Shift · E נחיתה · T שעה ביום · Q איכות · G מפה/גלגלים · C מצלמה · R שליטה ריאליסטית · A טייס אוטומטי · P צילום · M קול · 🖱️ עכבר · 🎮 שלט</p>
+</div>
+
+<h2>פעולות פתוחות</h2>
+<div class="card"><ul>
+  <li>מצב שליטה ריאליסטי (R) בסימולטור, ומשחק בטאבלט או טלפון, עוד לא נבדקו על ידי הבוט.</li>
+  <li>המטוסים בנויים בקוד. כדי שייראו פוטוריאליסטיים צריך להוריד מודל תלת־ממדי אמיתי, וזה דורש את אישורך.</li>
+  
+  <li>רעיונות להמשך: עוד ערים, עננים שאפשר לעוף דרכם, וצלילי עיר אמיתיים.</li>
+</ul></div>
+
+</div></body></html>

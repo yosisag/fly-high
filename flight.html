@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+  <title>טייס · מסביב לעולם</title>
+  <meta name="theme-color" content="#0c1426" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><circle cx='32' cy='32' r='30' fill='%230c1426'/><text x='32' y='44' font-size='34' text-anchor='middle'>✈️</text></svg>" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/src/style.css" />
+</head>
+<body class="flight">
+  <canvas id="scene"></canvas>
+
+  <svg class="cockpit-frame cf-airliner" viewBox="0 0 1600 1000" preserveAspectRatio="none" aria-hidden="true">
+    <path d="M0 0 H1600 V130 Q800 60 0 130 Z" fill="#14181e"/>
+    <path d="M0 130 Q800 60 1600 130 L1600 0 Z" fill="#1d232b"/>
+    <path d="M770 95 L830 95 L815 760 L785 760 Z" fill="#14181e"/>
+    <path d="M0 140 L140 120 L230 760 L0 820 Z" fill="#14181e"/><path d="M1600 140 L1460 120 L1370 760 L1600 820 Z" fill="#14181e"/>
+    <path d="M0 760 Q800 690 1600 760 V1000 H0 Z" fill="#20262e"/>
+    <path d="M0 760 Q800 690 1600 760 L1600 790 Q800 720 0 790 Z" fill="#0d1014"/>
+    <g fill="#081018" stroke="#2c3642" stroke-width="4"><rect x="470" y="805" width="190" height="150" rx="10"/><rect x="940" y="805" width="190" height="150" rx="10"/><rect x="705" y="815" width="190" height="130" rx="10"/></g>
+    <g fill="none" stroke="#3fd0ff" stroke-width="3" opacity=".75"><path d="M490 900 Q565 840 640 900"/><path d="M960 900 L1110 860"/><circle cx="800" cy="880" r="40"/></g>
+  </svg>
+  <svg class="cockpit-frame cf-light" viewBox="0 0 1600 1000" preserveAspectRatio="none" aria-hidden="true">
+    <path d="M0 0 H1600 V90 Q800 40 0 90 Z" fill="#2a2d31"/>
+    <path d="M0 0 L120 0 L260 700 L0 760 Z" fill="#2a2d31"/><path d="M1600 0 L1480 0 L1340 700 L1600 760 Z" fill="#2a2d31"/>
+    <path d="M0 700 Q800 640 1600 700 V1000 H0 Z" fill="#33363b"/>
+    <g fill="#111" stroke="#666" stroke-width="5"><circle cx="420" cy="830" r="62"/><circle cx="570" cy="830" r="62"/><circle cx="720" cy="830" r="62"/><circle cx="880" cy="830" r="62"/><circle cx="1030" cy="830" r="62"/><circle cx="1180" cy="830" r="62"/></g>
+    <g stroke="#f2f2f2" stroke-width="5" stroke-linecap="round"><path d="M420 830 L455 800"/><path d="M570 830 L540 790"/><path d="M720 830 L760 820"/><path d="M880 830 L880 785"/><path d="M1030 830 L1065 850"/><path d="M1180 830 L1150 800"/></g>
+    <path d="M760 1000 L760 900 Q800 870 840 900 L840 1000 Z" fill="#1c1d20"/>
+  </svg>
+  <div id="hud" class="hidden">
+    <div class="vignette"></div>
+    <div class="hit-flash"></div>
+    <div class="compass">
+      <div class="compass-tape" id="compassTape"></div>
+      <div class="compass-needle"></div>
+      <div class="compass-readout"><span id="headingDeg">000°</span> <b id="headingCard">N</b></div>
+    </div>
+    <div class="fl-card glass" id="flCard">
+      <div class="fl-route"><span id="flFrom"></span><span class="fl-plane">✈</span><span id="flTo"></span></div>
+      <div class="fl-bar"><div id="flProg"></div></div>
+      <div class="fl-meta"><span id="flDist"></span><span id="flEta"></span><span class="fl-warp" id="flWarp"></span></div>
+    </div>
+    <div class="gauge alt glass">
+      <div class="gauge-label">גובה</div>
+      <div class="gauge-value"><span id="altVal">0</span><small>רגל</small></div>
+      <div class="gauge-sub" id="aglVal">מעל הקרקע 0 מ׳</div>
+      <div class="gauge-sub" id="vsVal">▲ 0 רגל/דקה</div>
+    </div>
+    <div class="gauge spd glass">
+      <div class="gauge-label">מהירות</div>
+      <div class="gauge-value"><span id="spdVal">0</span><small>קשר</small></div>
+      <div class="boost"><div class="boost-label">מנוע</div><div class="boost-track"><div id="thrBar"></div></div></div>
+      <div class="gauge-sub" id="gearVal">⬇ גלגלים בחוץ</div>
+    </div>
+    <canvas id="adi" width="240" height="240"></canvas>
+    <div class="fl-status" id="flStatus"></div>
+    <div class="toast" id="toast"></div>
+    <div id="markers"></div>
+    <div class="keys-hint glass" id="keysHint">
+      <div><kbd>W</kbd><kbd>S</kbd> מנוע (גז)</div>
+      <div><kbd>←</kbd><kbd>→</kbd> פנייה · <kbd>↑</kbd><kbd>↓</kbd> טיפוס / ירידה (עזיבה = טיסה ישרה)</div>
+      <div><kbd>R</kbd> החלפה לשליטה ריאליסטית</div>
+      <div><kbd>A</kbd> 🤖 טייס אוטומטי — ממריא, טס ונוחת לבד</div>
+      <div><kbd>G</kbd> גלגלים · <kbd>B</kbd> בלמים</div>
+      <div><kbd>T</kbd> שעה · <kbd>C</kbd> מצלמה · <kbd>M</kbd> קול</div>
+      <div>🖱️ / 🎮 גם עובדים</div>
+    </div>
+    <div class="touch-ui" id="touchUI">
+      <div class="stick" id="stick"><div class="stick-knob" id="stickKnob"></div></div>
+      <button class="tbtn flap" id="btnThrUp">גז ▲</button>
+      <button class="tbtn boostbtn" id="btnThrDn">גז ▼</button>
+    </div>
+  </div>
+
+  <div id="title" class="screen">
+    <div class="title-card fl-title">
+      <div class="kicker"><span class="dot"></span> סימולטור טיסה · תלת־ממד אמיתי של כדור הארץ</div>
+      <h1 class="logo"><span class="l1">טייס</span><span class="l2">מסביב <em>לעולם</em> 🌍</span></h1>
+      <p class="tagline">המריאו מנתב״ג, טוסו מארץ לארץ ונחתו בשדות תעופה אמיתיים — עד ניו יורק.</p>
+      <div class="loader" id="loader"><div class="loader-track"><div class="loader-fill" id="loaderFill"></div></div><div class="loader-text" id="loaderText">מתחבר לכדור הארץ…</div></div>
+      <div class="key-box hidden" id="keyBox">
+        <div class="kb-title">🌍 צריך טוקן Cesium ion (חינם) כדי לטוס מעל כדור הארץ האמיתי</div>
+        <div class="kb-row"><input id="gkey" type="password" autocomplete="off" spellcheck="false" placeholder="הדביקו כאן את הטוקן" dir="ltr" /><button id="btnKey">שמירה</button></div>
+        <div class="kb-help">הרשמה חינם ב-<b>ion.cesium.com</b> ← Access Tokens ← Default token ← העתקה. הטוקן נשמר רק בדפדפן שלכם.</div>
+      </div>
+      <div class="plane-pick" id="planePick"></div>
+      <div class="levels" id="levels"></div>
+      <div class="fl-links"><a class="quality-btn city-link" href="./index.html">🏙️ פתח תקווה</a><a class="quality-btn city-link" href="./nyc.html">🗽 ניו יורק</a></div>
+    </div>
+    <div class="credits">Google · Cesium ion</div>
+  </div>
+
+  <div id="end" class="screen hidden">
+    <div class="title-card end-card">
+      <div class="kicker"><span class="dot"></span> <span id="endKicker">נחיתה</span></div>
+      <h2 class="m-title" id="endTitle"></h2>
+      <div class="stars" id="endStars"></div>
+      <div class="stats"><div class="stat"><div class="v" id="endTime">--</div><div class="k">זמן טיסה</div></div><div class="stat"><div class="v" id="endVs">--</div><div class="k">מגע בקרקע</div></div><div class="stat"><div class="v" id="endDist">--</div><div class="k">ק״מ</div></div><div class="stat"><div class="v" id="endBest">--</div><div class="k">שיא</div></div></div>
+      <div class="md-hint" id="endHint"></div>
+      <div class="actions"><button class="btn primary" id="btnNext"></button><button class="btn ghost" id="btnRetry">נסו שוב</button><button class="btn ghost" id="btnLevels">כל השלבים</button></div>
+    </div>
+  </div>
+  <script type="module" src="/src/flight.js"></script>
+</body>
+</html>

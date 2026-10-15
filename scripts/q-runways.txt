@@ -1,0 +1,11 @@
+[out:json][timeout:120];
+(
+ way["aeroway"="runway"](around:5000,32.0094,34.8867);
+ way["aeroway"="runway"](around:5000,34.8751,33.6249);
+ way["aeroway"="runway"](around:5000,37.9364,23.9445);
+ way["aeroway"="runway"](around:5000,41.8003,12.2389);
+ way["aeroway"="runway"](around:5000,49.0097,2.5479);
+ way["aeroway"="runway"](around:5000,51.4700,-0.4543);
+ way["aeroway"="runway"](around:5000,40.6413,-73.7781);
+);
+out geom tags;

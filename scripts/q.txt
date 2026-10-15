@@ -1,0 +1,11 @@
+[out:json][timeout:180];
+(
+ way["building"](32.070,34.850,32.110,34.910);
+ relation["building"](32.070,34.850,32.110,34.910);
+ way["highway"~"^(motorway|trunk|primary|secondary|tertiary|residential|unclassified)$"](32.070,34.850,32.110,34.910);
+ way["leisure"~"park|garden|pitch|stadium"](32.070,34.850,32.110,34.910);
+ way["landuse"~"grass|park|forest|recreation_ground|cemetery|orchard"](32.070,34.850,32.110,34.910);
+ way["natural"~"water|wood|scrub"](32.070,34.850,32.110,34.910);
+ way["waterway"](32.070,34.850,32.110,34.910);
+);
+out geom tags;

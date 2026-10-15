@@ -1,0 +1,9 @@
+node_modules
+dist
+scripts/raw.json
+.DS_Store
+.env.local
+scripts/raw*.json
+scripts/q-block.txt
+public/data/block.json
+.env.*
